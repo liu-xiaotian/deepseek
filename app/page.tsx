@@ -1,15 +1,40 @@
 "use client";
 import { useState } from "react";
 import EastIcon from "@mui/icons-material/East";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 export default function Home() {
   const [input, setInput] = useState("");
-  const [model, setModel] = useState("deepseek-r1");
+  const [model, setModel] = useState("deepseek-chat");
   const handleChangeModel = () => {
-    setModel(model === "deepseek-r1" ? "deepseek-r2" : "deepseek-r1");
+    setModel(model === "deepseek-chat" ? "deepseek-r1" : "deepseek-chat");
   };
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const user = useUser();
+  //Mutations 创建聊天createChat() → 成功后跳转聊天页 → 刷新缓存
+  const { mutate: createChat } = useMutation({
+    mutationFn: async () => {
+      return axios.post("/api/create-chat", {
+        title: input,
+        model,
+      });
+    },
+    onSuccess: (res) => {
+      router.push(`/chat/${res.data.id}`);
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
+
   const handleSubmit = () => {
     if (input.trim() === "") return;
-    setInput("");
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+    createChat();
   };
   return (
     <div className="h-screen flex flex-col items-center">

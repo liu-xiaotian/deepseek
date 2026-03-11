@@ -4,13 +4,13 @@ import { useChat } from "@ai-sdk/react";
 import { useEffect, useRef, useState } from "react";
 import EastIcon from "@mui/icons-material/East";
 export default function Page() {
-  const [model, setModel] = useState("deepseek-v3");
+  const [model, setModel] = useState("deepseek-chat");
   const [input, setInput] = useState("");
 
   const { messages, sendMessage } = useChat({});
 
   const handleChangeModel = () => {
-    setModel(model === "deepseek-v3" ? "deepseek-r1" : "deepseek-v3");
+    setModel(model === "deepseek-chat" ? "deepseek-r1" : "deepseek-chat");
   };
   const handleSubmit = () => {
     if (input.trim()) {

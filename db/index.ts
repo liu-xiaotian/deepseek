@@ -15,8 +15,8 @@ const db = drizzle(queryClient);
 
 // chats
 export const createChat = async (
-  title: string,
   userId: string,
+  title: string,
   model: string,
 ) => {
   try {
@@ -44,7 +44,7 @@ export const getChat = async (chatId: number, userId: string) => {
     if (chat.length === 0) {
       return null;
     }
-    return null;
+    return chat[0];
   } catch (error) {
     console.error("Error getting chat:", error);
     return null;

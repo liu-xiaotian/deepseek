@@ -3,15 +3,38 @@
 import { useChat } from "@ai-sdk/react";
 import { useEffect, useRef, useState } from "react";
 import EastIcon from "@mui/icons-material/East";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { DefaultChatTransport } from "ai";
 export default function Page() {
+  const { chat_id } = useParams();
+
+  const { data: chat } = useQuery({
+    queryKey: ["chat", chat_id],
+    queryFn: () => {
+      return axios.post(`/api/get-chat`, {
+        chat_id: chat_id,
+      });
+    },
+  });
+
   const [model, setModel] = useState("deepseek-chat");
   const [input, setInput] = useState("");
-
-  const { messages, sendMessage } = useChat({});
-
   const handleChangeModel = () => {
     setModel(model === "deepseek-chat" ? "deepseek-r1" : "deepseek-chat");
   };
+
+  const { messages, sendMessage } = useChat({
+    transport: new DefaultChatTransport({
+      body: {
+        model: model,
+        chat_id: chat_id,
+        chat_user_id: chat?.data?.userId,
+      },
+    }),
+  });
+
   const handleSubmit = () => {
     if (input.trim()) {
       sendMessage({ text: input });

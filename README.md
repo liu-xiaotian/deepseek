@@ -1,3 +1,10 @@
+## 🌐 Translations
+
+[English](./translations/en/README.md)
+
+---
+
+
 仿 deepseek：
 Clerk：实现登录功能
 TanStack Query：管理请求和缓存
